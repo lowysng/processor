@@ -87,6 +87,18 @@ export const slice = (
     return { bits: signal.bits.slice(start, end) }
 }
 
+export const concatenate = (
+    ...signals: Signal[]
+): Signal => {
+    const output = { bits: [] }
+    signals.forEach((signal) => {
+        signal.bits.forEach((bit) => {
+            output.bits.push(bit)
+        })
+    })
+    return output
+}
+
 export const toString = (
     signal: Signal,
 ): string => {
