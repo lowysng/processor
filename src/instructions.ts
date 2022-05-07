@@ -1,0 +1,25 @@
+import { SixteenBitSignal, makeSignal } from './signals'
+
+export const instructions = [
+    makeSignal('0000 0000 0000 0001') as SixteenBitSignal,
+    makeSignal('1000 1100 0000 1000') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0011') as SixteenBitSignal,
+    makeSignal('1000 1100 0001 0000') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0010') as SixteenBitSignal,
+    makeSignal('1000 0011 0000 1000') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0001') as SixteenBitSignal,
+    makeSignal('1001 1100 0001 0000') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0010') as SixteenBitSignal,
+    makeSignal('1001 0100 1101 0000') as SixteenBitSignal,
+    makeSignal('0000 0000 0001 0100') as SixteenBitSignal,
+    makeSignal('1000 0011 0001 0001') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0001') as SixteenBitSignal,
+    makeSignal('1001 1100 0001 0000') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0000') as SixteenBitSignal,
+    makeSignal('1001 0000 1000 1000') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0001') as SixteenBitSignal,
+    makeSignal('1001 1101 1100 1000') as SixteenBitSignal,
+    makeSignal('0000 0000 0000 0110') as SixteenBitSignal,
+    makeSignal('1000 1010 1000 0111') as SixteenBitSignal,
+    makeSignal('1000 1000 0000 0000') as SixteenBitSignal,
+]

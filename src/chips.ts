@@ -172,6 +172,10 @@ export type CPUOutput = {
     isWriteMemory: OneBitSignal,
     pcRegister: SixteenBitSignal,
     isHalt: OneBitSignal,
+
+    _aRegister: Function,
+    _dRegister: Function,
+    _pcRegister: Function,
 }
 
 type CPU = (input: CPUInput) => CPUOutput
@@ -223,6 +227,9 @@ export const makeCPU = (): CPU => {
             isWriteMemory,
             pcRegister: pcOut,
             isHalt: isEquals(cSignal, makeSignal('100000')) ? SIGNALS._1 : SIGNALS._0,
+            _aRegister: aRegister,
+            _dRegister: dRegister,
+            _pcRegister: pcRegister,
         }
     }
 }
