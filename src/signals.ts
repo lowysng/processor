@@ -61,6 +61,11 @@ const _0010: FourBitSignal = makeSignal('0010') as FourBitSignal
 const _0100: FourBitSignal = makeSignal('0100') as FourBitSignal
 const _1000: FourBitSignal = makeSignal('1000') as FourBitSignal
 
+// SixBitSignal
+export interface SixBitSignal extends Signal {
+    bits: [Bit, Bit, Bit, Bit, Bit, Bit]
+}
+
 // EightBitSignal
 export interface EightBitSignal extends Signal {
     bits: [Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit]
