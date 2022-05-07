@@ -1,18 +1,22 @@
 import {
+    SIGNALS,
     OneBitSignal,
     TwoBitSignal,
+    SixBitSignal,
+    SixteenBitSignal,
     concatenate,
     slice,
-    SixteenBitSignal,
-    SIGNALS,
     makeSignal,
     isEquals,
     toString,
+    some,
 } from './signals'
 import {
     and,
     xor,
     or,
+    not16,
+    and16,
 } from './gates'
 
 export const halfAdder = (
@@ -110,5 +114,47 @@ export const makeProgramCounter = (): ProgramCounter => {
             latch = inc16(latch)
         }
         return latch
+    }
+}
+
+type ALUInput = {
+    x: SixteenBitSignal,
+    y: SixteenBitSignal,
+    control: SixBitSignal,
+}
+
+type ALUOutput = {
+    out: SixteenBitSignal,
+    isZero: OneBitSignal,
+    isNegative: OneBitSignal,
+}
+
+export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
+    const zeroX     = isEquals(slice(control, 0, 1), SIGNALS._1)
+    const negateX   = isEquals(slice(control, 1, 2), SIGNALS._1)
+    const zeroY     = isEquals(slice(control, 2, 3), SIGNALS._1)
+    const negateY   = isEquals(slice(control, 3, 4), SIGNALS._1)
+    const isAdd     = isEquals(slice(control, 4, 5), SIGNALS._1)
+    const negateOut = isEquals(slice(control, 5, 6), SIGNALS._1)
+
+    let out: SixteenBitSignal
+
+    if (zeroX)      x = SIGNALS._0000000000000000
+    if (negateX)    x = not16(x)
+    if (zeroY)      y = SIGNALS._0000000000000000
+    if (negateY)    y = not16(y)
+
+    if (isAdd)     out = add16(x, y)
+    else           out = and16(x, y)
+    if (negateOut) out = not16(out)
+    
+    const isOne = (signal: OneBitSignal) => isEquals(signal, SIGNALS._1)
+    const isZero = !some(out, isOne) ? SIGNALS._1 : SIGNALS._0
+    const isNegative = isEquals(slice(out, 0, 1), SIGNALS._1) ? SIGNALS._1 : SIGNALS._0
+
+    return {
+        out,
+        isZero,
+        isNegative,
     }
 }
