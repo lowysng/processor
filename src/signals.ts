@@ -172,6 +172,20 @@ export const every = (
     }
 }
 
+export const toNumber = (
+    signal: Signal,
+): number => {
+    let sum = 0
+    let j = 0
+    for (let i = signal.bits.length - 1; i >= 0; i--) {
+        if (signal.bits[i] === Bit.ONE) {
+            sum += 2 ** j
+        }
+        j += 1
+    }
+    return sum
+}
+
 export const SIGNALS = {
     _0,
     _1,
