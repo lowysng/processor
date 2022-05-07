@@ -82,6 +82,8 @@ export interface SixteenBitSignal extends Signal {
 const _0000000000000000: SixteenBitSignal = makeSignal('0000000000000000') as SixteenBitSignal
 const _0000000000000001: SixteenBitSignal = makeSignal('0000000000000001') as SixteenBitSignal
 const _0000000000000010: SixteenBitSignal = makeSignal('0000000000000010') as SixteenBitSignal
+const _0000000011111111: SixteenBitSignal = makeSignal('0000000011111111') as SixteenBitSignal
+const _1111111100000000: SixteenBitSignal = makeSignal('1111111100000000') as SixteenBitSignal
 const _1111111111111110: SixteenBitSignal = makeSignal('1111111111111110') as SixteenBitSignal
 const _1111111111111111: SixteenBitSignal = makeSignal('1111111111111111') as SixteenBitSignal
 
@@ -195,6 +197,8 @@ export const SIGNALS = {
     _0000000000000000,
     _0000000000000001,
     _0000000000000010,
+    _0000000011111111,
+    _1111111100000000,
     _1111111111111110,
     _1111111111111111,
 }
