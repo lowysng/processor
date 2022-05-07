@@ -6,6 +6,8 @@ import {
     SixteenBitSignal,
     SIGNALS,
     makeSignal,
+    isEquals,
+    toString,
 } from './signals'
 import {
     and,
@@ -62,4 +64,51 @@ export const inc16 = (
     signal: SixteenBitSignal,
 ): SixteenBitSignal => {
     return add16(signal, makeSignal('0000 0000 0000 0001') as SixteenBitSignal)
+}
+
+type Register = (input?: SixteenBitSignal, isLoad?: OneBitSignal) => SixteenBitSignal
+
+export const makeRegister = (): Register => {
+    let latch: SixteenBitSignal = SIGNALS._0000000000000000
+    return (input?, isLoad?) => {
+        if (input && isLoad && isEquals(isLoad, SIGNALS._1)) {
+            latch = input
+        }
+        return latch
+    }
+}
+
+type RAM64K = (address: SixteenBitSignal, input?: SixteenBitSignal, isLoad?: OneBitSignal) => SixteenBitSignal
+
+export const makeRAM64K = (): RAM64K => {
+    const registers = {}
+    return (address, input?, isLoad?) => {
+        const string = toString(address)
+        if (registers[string] === undefined) {
+            registers[string] = makeRegister()
+        }
+        const register = registers[string]
+        return register(input, isLoad)
+    }
+}
+
+type ProgramCounter = (
+    input?: SixteenBitSignal,
+    isIncrement?: OneBitSignal,
+    isLoad?: OneBitSignal,
+    isReset?: OneBitSignal,
+) => SixteenBitSignal
+
+export const makeProgramCounter = (): ProgramCounter => {
+    let latch: SixteenBitSignal = SIGNALS._0000000000000000
+    return (input?, isIncrement?,  isLoad?, isReset?,) => {
+        if (isReset && isEquals(isReset, SIGNALS._1)) {
+            latch = SIGNALS._0000000000000000
+        } else if (isLoad && isEquals(isLoad, SIGNALS._1)) {
+            latch = input
+        } else if (isIncrement && isEquals(isIncrement, SIGNALS._1)) {
+            latch = inc16(latch)
+        }
+        return latch
+    }
 }
