@@ -2,6 +2,7 @@ import {
     isEquals,
     makeSignal,
     SIGNALS,
+    SixBitSignal,
     SixteenBitSignal
 } from './signals'
 import {
@@ -11,6 +12,7 @@ import {
     makeRegister,
     makeRAM64K,
     makeProgramCounter,
+    ALU,
 } from './chips'
 
 describe('full adder', () => {
@@ -363,4 +365,40 @@ describe('program counter', () => {
             SIGNALS._1,
         ), SIGNALS._0000000000000000)).toBeTruthy()
     })
+})
+
+describe('ALU', () => {
+    const aRegister = SIGNALS._1111111100000000
+    const dRegister = SIGNALS._0000000011111111
+
+    const tests = [
+        { name: 'ALU(a,d,101010) should return 0000 0000 0000 0000 10', input: { x: dRegister, y: aRegister, control: makeSignal('101010') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0000 0000 0000'), isZero: SIGNALS._1, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,111111) should return 0000 0000 0000 0001 00', input: { x: dRegister, y: aRegister, control: makeSignal('111111') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0000 0000 0001'), isZero: SIGNALS._0, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,111010) should return 1111 1111 1111 1111 01', input: { x: dRegister, y: aRegister, control: makeSignal('111010') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1111 1111 1111'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,001100) should return 0000 0000 1111 1111 00', input: { x: dRegister, y: aRegister, control: makeSignal('001100') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0000 1111 1111'), isZero: SIGNALS._0, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,110000) should return 1111 1111 0000 0000 01', input: { x: dRegister, y: aRegister, control: makeSignal('110000') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1111 0000 0000'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,001101) should return 1111 1111 0000 0000 01', input: { x: dRegister, y: aRegister, control: makeSignal('001101') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1111 0000 0000'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,110001) should return 0000 0000 1111 1111 00', input: { x: dRegister, y: aRegister, control: makeSignal('110001') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0000 1111 1111'), isZero: SIGNALS._0, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,001111) should return 1111 1111 0000 0001 01', input: { x: dRegister, y: aRegister, control: makeSignal('001111') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1111 0000 0001'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,110011) should return 0000 0001 0000 0000 00', input: { x: dRegister, y: aRegister, control: makeSignal('110011') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0001 0000 0000'), isZero: SIGNALS._0, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,011111) should return 0000 0001 0000 0000 00', input: { x: dRegister, y: aRegister, control: makeSignal('011111') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0001 0000 0000'), isZero: SIGNALS._0, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,110111) should return 1111 1111 0000 0001 01', input: { x: dRegister, y: aRegister, control: makeSignal('110111') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1111 0000 0001'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,001110) should return 0000 0000 1111 1110 00', input: { x: dRegister, y: aRegister, control: makeSignal('001110') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0000 1111 1110'), isZero: SIGNALS._0, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,110010) should return 1111 1110 1111 1111 01', input: { x: dRegister, y: aRegister, control: makeSignal('110010') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1110 1111 1111'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,000010) should return 1111 1111 1111 1111 01', input: { x: dRegister, y: aRegister, control: makeSignal('000010') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1111 1111 1111'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,010011) should return 0000 0001 1111 1111 00', input: { x: dRegister, y: aRegister, control: makeSignal('010011') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0001 1111 1111'), isZero: SIGNALS._0, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,000111) should return 1111 1110 0000 0001 01', input: { x: dRegister, y: aRegister, control: makeSignal('000111') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1110 0000 0001'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+        { name: 'ALU(a,d,000000) should return 0000 0000 0000 0000 10', input: { x: dRegister, y: aRegister, control: makeSignal('000000') as SixBitSignal }, expectedOutput: { out: makeSignal('0000 0000 0000 0000'), isZero: SIGNALS._1, isNegative: SIGNALS._0 }},
+        { name: 'ALU(a,d,010101) should return 1111 1111 1111 1111 01', input: { x: dRegister, y: aRegister, control: makeSignal('010101') as SixBitSignal }, expectedOutput: { out: makeSignal('1111 1111 1111 1111'), isZero: SIGNALS._0, isNegative: SIGNALS._1 }},
+    ]
+
+    tests.forEach(({ name, input, expectedOutput }) => {
+        test(name, () => {
+            const { out, isZero, isNegative } = ALU(input)
+            expect(isEquals(out, expectedOutput.out)).toBeTruthy()
+            expect(isEquals(isZero, expectedOutput.isZero)).toBeTruthy()
+            expect(isEquals(isNegative, expectedOutput.isNegative)).toBeTruthy()
+        })
+    })
+
 })
