@@ -10,6 +10,7 @@ import {
     isEquals,
     toString,
     every,
+    ThreeBitSignal,
 } from './signals'
 import {
     and,
@@ -17,6 +18,8 @@ import {
     or,
     not16,
     and16,
+    multiplexor16,
+    not,
 } from './gates'
 
 export const halfAdder = (
@@ -154,5 +157,72 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
         out,
         isZero: every(out, isZero),
         isNegative: isEquals(slice(out, 0, 1), SIGNALS._1) ? SIGNALS._1 : SIGNALS._0,
+    }
+}
+
+export type CPUInput = {
+    instruction: SixteenBitSignal,
+    memoryIn: SixteenBitSignal,
+    isReset: OneBitSignal,
+}
+
+export type CPUOutput = {
+    memoryOut: SixteenBitSignal,
+    memoryAddress: SixteenBitSignal,
+    isWriteMemory: OneBitSignal,
+    pcRegister: SixteenBitSignal,
+    isHalt: OneBitSignal,
+}
+
+type CPU = (input: CPUInput) => CPUOutput
+
+export const makeCPU = (): CPU => {
+    const aRegister = makeRegister()
+    const dRegister = makeRegister()
+    const pcRegister = makeProgramCounter()
+
+    return ({ instruction, memoryIn, isReset }) => {
+        const opCode = slice(instruction, 0, 1) as OneBitSignal
+        const aSignal = slice(instruction, 3, 4) as OneBitSignal
+        const cSignal = slice(instruction, 4, 10) as SixBitSignal
+        const dSignal = slice(instruction, 10, 13) as ThreeBitSignal
+        const jSignal = slice(instruction, 13, 16) as ThreeBitSignal
+
+        const ALUInput1 = dRegister()
+        const ALUInput2 = multiplexor16(aRegister(), memoryIn, aSignal)
+        const { out: ALUOut, isZero, isNegative } = ALU({ x: ALUInput1, y: ALUInput2, control: cSignal })
+
+        const aRegisterNextValue = multiplexor16(instruction, ALUOut, opCode)
+        const isWriteARegister = or(not(opCode), slice(dSignal, 0, 1) as OneBitSignal)
+        aRegister(aRegisterNextValue, isWriteARegister)
+
+        const isWriteDRegister = and(opCode, slice(dSignal, 1, 2) as OneBitSignal)
+        dRegister(ALUOut, isWriteDRegister)
+
+        const memoryOut = ALUOut
+        const memoryAddress = aRegister()
+        const isWriteMemory = and(opCode, slice(dSignal, 2, 3) as OneBitSignal)
+
+        let isJump: OneBitSignal = SIGNALS._0
+        if (isEquals(opCode, SIGNALS._0)) isJump = SIGNALS._0
+        else if (isEquals(jSignal, makeSignal('000'))) isJump = SIGNALS._0
+        else if (isEquals(jSignal, makeSignal('111'))) isJump = SIGNALS._1
+        else if (isEquals(jSignal, makeSignal('001'))) isJump = and(not(isZero), not(isNegative))
+        else if (isEquals(jSignal, makeSignal('010'))) isJump = isZero
+        else if (isEquals(jSignal, makeSignal('011'))) isJump = or(isZero, not(isNegative))
+        else if (isEquals(jSignal, makeSignal('100'))) isJump = isNegative
+        else if (isEquals(jSignal, makeSignal('101'))) isJump = not(isZero)
+        else if (isEquals(jSignal, makeSignal('110'))) isJump = or(isZero, isNegative)
+
+        const isIncrement = not(isJump)
+        const pcOut = pcRegister(aRegister(), isIncrement, isJump, isReset)
+
+        return {
+            memoryOut,
+            memoryAddress,
+            isWriteMemory,
+            pcRegister: pcOut,
+            isHalt: isEquals(cSignal, makeSignal('100000')) ? SIGNALS._1 : SIGNALS._0,
+        }
     }
 }
