@@ -9,7 +9,7 @@ import {
     makeSignal,
     isEquals,
     toString,
-    some,
+    every,
 } from './signals'
 import {
     and,
@@ -148,13 +148,11 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
     else           out = and16(x, y)
     if (negateOut) out = not16(out)
     
-    const isOne = (signal: OneBitSignal) => isEquals(signal, SIGNALS._1)
-    const isZero = !some(out, isOne) ? SIGNALS._1 : SIGNALS._0
-    const isNegative = isEquals(slice(out, 0, 1), SIGNALS._1) ? SIGNALS._1 : SIGNALS._0
+    const isZero = (signal: OneBitSignal) => isEquals(signal, SIGNALS._0)
 
     return {
         out,
-        isZero,
-        isNegative,
+        isZero: every(out, isZero),
+        isNegative: isEquals(slice(out, 0, 1), SIGNALS._1) ? SIGNALS._1 : SIGNALS._0,
     }
 }
