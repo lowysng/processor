@@ -159,6 +159,17 @@ export const some = (
     }
 }
 
+export const every = (
+    signal: Signal,
+    predicate: (s: OneBitSignal) => boolean
+): OneBitSignal => {
+    if (signal.bits.every((bit) => predicate({ bits: [bit] }))) {
+        return _1
+    } else {
+        return _0
+    }
+}
+
 export const SIGNALS = {
     _0,
     _1,
