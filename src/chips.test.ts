@@ -8,6 +8,9 @@ import {
     fullAdder,
     add16,
     inc16,
+    makeRegister,
+    makeRAM64K,
+    makeProgramCounter,
 } from './chips'
 
 describe('full adder', () => {
@@ -82,5 +85,282 @@ describe('inc16', () => {
             inc16(makeSignal('1111 1111 1111 1111') as SixteenBitSignal),
             makeSignal('0000 0000 0000 0000'),
         )).toBeTruthy()
+    })
+})
+
+describe('register', () => {
+    const register = makeRegister()
+    test('register() should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            register(),
+            SIGNALS._0000000000000000,
+        )).toBeTruthy()
+    })
+    test('...register(1111 1111 1111 1111, 0) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            register(SIGNALS._1111111111111111, SIGNALS._0),
+            SIGNALS._0000000000000000,
+        )).toBeTruthy()
+    })
+    test('...register(1111 1111 1111 1111, 1) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            register(SIGNALS._1111111111111111, SIGNALS._1),
+            SIGNALS._1111111111111111,
+        )).toBeTruthy()
+    })
+    test('...register(0000 0000 0000 0000, 0) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            register(SIGNALS._0000000000000000, SIGNALS._0),
+            SIGNALS._1111111111111111,
+        )).toBeTruthy()
+    })
+    test('...register() should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            register(),
+            SIGNALS._1111111111111111,
+        )).toBeTruthy()
+    })
+    test('...register(0000 0000 0000 0000, 1) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            register(SIGNALS._0000000000000000, SIGNALS._1),
+            SIGNALS._0000000000000000,
+        )).toBeTruthy()
+    })
+    test('...register() should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            register(),
+            SIGNALS._0000000000000000,
+        )).toBeTruthy()
+    })
+})
+
+describe ('makeRAM64K', () => {
+    const RAM = makeRAM64K()
+    test('RAM(0000 0000 0000 0000) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0001) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000001),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0010) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000010),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000, 1111 1111 1111 1111, 0) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000, SIGNALS._1111111111111111, SIGNALS._0),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000, 1111 1111 1111 1111, 1) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000, SIGNALS._1111111111111111, SIGNALS._1),
+            SIGNALS._1111111111111111
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000),
+            SIGNALS._1111111111111111
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0001) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000001),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0010) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000010),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000, 0000 0000 0000 0000, 0) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000, SIGNALS._0000000000000000, SIGNALS._0),
+            SIGNALS._1111111111111111
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0001, 0000 0000 0000 0010, 1) should return 0000 0000 0000 0010', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000001, SIGNALS._0000000000000010, SIGNALS._1),
+            SIGNALS._0000000000000010
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000),
+            SIGNALS._1111111111111111
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0001) should return 0000 0000 0000 0010', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000001),
+            SIGNALS._0000000000000010
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0010) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000010),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000, 0000 0000 0000 0000, 0) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000, SIGNALS._0000000000000000, SIGNALS._0),
+            SIGNALS._1111111111111111
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000, 0000 0000 0000 0000, 1) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000, SIGNALS._0000000000000000, SIGNALS._1),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0000) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000000),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0001) should return 0000 0000 0000 0010', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000001),
+            SIGNALS._0000000000000010
+        )).toBeTruthy()
+    })
+    test('...RAM(0000 0000 0000 0010) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(
+            RAM(SIGNALS._0000000000000010),
+            SIGNALS._0000000000000000
+        )).toBeTruthy()
+    })
+})
+
+describe('program counter', () => {
+    const pc = makeProgramCounter()
+    test('pc() should return 0000 0000 0000 0000', () => {
+        expect(isEquals(pc(), SIGNALS._0000000000000000)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 0, 0, 0) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._0,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._0000000000000000)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 1, 0, 0) should return 0000 0000 0000 0001', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._1,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._0000000000000001)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 0, 0, 0) should return 0000 0000 0000 0001', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._0,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._0000000000000001)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 1, 0, 0) should return 0000 0000 0000 0010', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._1,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._0000000000000010)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 0, 0, 0) should return 0000 0000 0000 0010', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._0,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._0000000000000010)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 1, 1, 0) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._1,
+            SIGNALS._1,
+            SIGNALS._0,
+        ), SIGNALS._1111111111111111)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 0, 0, 0) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._0,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._1111111111111111)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 1, 0, 0) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._1,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._0000000000000000)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 1, 0, 0) should return 0000 0000 0000 0001', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._1,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._0000000000000001)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1111, 1, 1, 1) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111111,
+            SIGNALS._1,
+            SIGNALS._1,
+            SIGNALS._1,
+        ), SIGNALS._0000000000000000)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1110, 0, 1, 0) should return 1111 1111 1111 1110', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111110,
+            SIGNALS._0,
+            SIGNALS._1,
+            SIGNALS._0,
+        ), SIGNALS._1111111111111110)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1110, 1, 0, 0) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111110,
+            SIGNALS._1,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._1111111111111111)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1110, 0, 0, 0) should return 1111 1111 1111 1111', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111110,
+            SIGNALS._0,
+            SIGNALS._0,
+            SIGNALS._0,
+        ), SIGNALS._1111111111111111)).toBeTruthy()
+    })
+    test('...pc(1111 1111 1111 1110, 1, 1, 1) should return 0000 0000 0000 0000', () => {
+        expect(isEquals(pc(
+            SIGNALS._1111111111111110,
+            SIGNALS._1,
+            SIGNALS._1,
+            SIGNALS._1,
+        ), SIGNALS._0000000000000000)).toBeTruthy()
     })
 })
