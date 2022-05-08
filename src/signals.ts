@@ -7,39 +7,52 @@ export interface Signal {
     bits: Bit[]
 }
 
-// Constructor 
-export const makeSignal = (signal: string) => {
-    return { 
-        bits: signal.replace(/\s+/g, '').split('').map((char) => {
-            if (char === '0') return Bit.ZERO
-            if (char === '1') return Bit.ONE
-            throw new Error(`invalid char in string of makeSignal: ${signal}`)
-        })
-    }
-}
-
-// OneBitSignal
 export interface OneBitSignal extends Signal {
     bits: [Bit]
+}
+
+export interface TwoBitSignal extends Signal {
+    bits: [Bit, Bit]
+}
+
+export interface ThreeBitSignal extends Signal {
+    bits: [Bit, Bit, Bit]
+}
+
+export interface FourBitSignal extends Signal {
+    bits: [Bit, Bit, Bit, Bit]
+}
+
+export interface SixBitSignal extends Signal {
+    bits: [Bit, Bit, Bit, Bit, Bit, Bit]
+}
+
+export interface EightBitSignal extends Signal {
+    bits: [Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit]
+}
+
+export interface SixteenBitSignal extends Signal {
+    bits: [Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit]
+}
+
+export const makeSignal = (signal: string): Signal => {
+    const removeWhitespace = signal.replace(/\s+/g, '')
+    const array = removeWhitespace.split('')
+    const bits = array.map((char) => {
+        if (char === '0') return Bit.ZERO
+        if (char === '1') return Bit.ONE
+        throw new Error(`invalid char in string of makeSignal: ${signal}`)
+    })
+    return { bits }
 }
 
 const _0: OneBitSignal = makeSignal('0') as OneBitSignal
 const _1: OneBitSignal = makeSignal('1') as OneBitSignal
 
-// TwoBitSignal
-export interface TwoBitSignal extends Signal {
-    bits: [Bit, Bit]
-}
-
 const _00: TwoBitSignal = makeSignal('00') as TwoBitSignal
 const _01: TwoBitSignal = makeSignal('01') as TwoBitSignal
 const _10: TwoBitSignal = makeSignal('10') as TwoBitSignal
 const _11: TwoBitSignal = makeSignal('11') as TwoBitSignal
-
-// ThreeBitSignal
-export interface ThreeBitSignal extends Signal {
-    bits: [Bit, Bit, Bit]
-}
 
 const _000: ThreeBitSignal = makeSignal('000') as ThreeBitSignal
 const _001: ThreeBitSignal = makeSignal('001') as ThreeBitSignal
@@ -50,34 +63,14 @@ const _101: ThreeBitSignal = makeSignal('101') as ThreeBitSignal
 const _110: ThreeBitSignal = makeSignal('110') as ThreeBitSignal
 const _111: ThreeBitSignal = makeSignal('111') as ThreeBitSignal
 
-// FourBitSignal
-export interface FourBitSignal extends Signal {
-    bits: [Bit, Bit, Bit, Bit]
-}
-
 const _0000: FourBitSignal = makeSignal('0000') as FourBitSignal
 const _0001: FourBitSignal = makeSignal('0001') as FourBitSignal
 const _0010: FourBitSignal = makeSignal('0010') as FourBitSignal
 const _0100: FourBitSignal = makeSignal('0100') as FourBitSignal
 const _1000: FourBitSignal = makeSignal('1000') as FourBitSignal
 
-// SixBitSignal
-export interface SixBitSignal extends Signal {
-    bits: [Bit, Bit, Bit, Bit, Bit, Bit]
-}
-
-// EightBitSignal
-export interface EightBitSignal extends Signal {
-    bits: [Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit]
-}
-
 const _00000000: EightBitSignal = makeSignal('0000 0000') as EightBitSignal
 const _11111111: EightBitSignal = makeSignal('1111 1111') as EightBitSignal
-
-// SixteenBitSignal
-export interface SixteenBitSignal extends Signal {
-    bits: [Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit, Bit]
-}
 
 const _0000000000000000: SixteenBitSignal = makeSignal('0000000000000000') as SixteenBitSignal
 const _0000000000000001: SixteenBitSignal = makeSignal('0000000000000001') as SixteenBitSignal
@@ -87,7 +80,36 @@ const _1111111100000000: SixteenBitSignal = makeSignal('1111111100000000') as Si
 const _1111111111111110: SixteenBitSignal = makeSignal('1111111111111110') as SixteenBitSignal
 const _1111111111111111: SixteenBitSignal = makeSignal('1111111111111111') as SixteenBitSignal
 
-// Utility Functions
+export const SIGNALS = {
+    _0,
+    _1,
+    _00,
+    _01,
+    _10,
+    _11,
+    _000,
+    _001,
+    _010,
+    _011,
+    _100,
+    _101,
+    _110,
+    _111,
+    _0000,
+    _0001,
+    _0010,
+    _0100,
+    _1000,
+    _00000000,
+    _11111111,
+    _0000000000000000,
+    _0000000000000001,
+    _0000000000000010,
+    _0000000011111111,
+    _1111111100000000,
+    _1111111111111110,
+    _1111111111111111,
+}
 
 export const slice = (
     signal: Signal,
@@ -184,35 +206,4 @@ export const toNumber = (
         j += 1
     }
     return sum
-}
-
-export const SIGNALS = {
-    _0,
-    _1,
-    _00,
-    _01,
-    _10,
-    _11,
-    _000,
-    _001,
-    _010,
-    _011,
-    _100,
-    _101,
-    _110,
-    _111,
-    _0000,
-    _0001,
-    _0010,
-    _0100,
-    _1000,
-    _00000000,
-    _11111111,
-    _0000000000000000,
-    _0000000000000001,
-    _0000000000000010,
-    _0000000011111111,
-    _1111111100000000,
-    _1111111111111110,
-    _1111111111111111,
 }
