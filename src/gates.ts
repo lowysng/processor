@@ -31,11 +31,7 @@ export const nand = (
 export const not = (
     signal: OneBitSignal,
 ): OneBitSignal => {
-    if (isEquals(signal, SIGNALS._1)) {
-        return SIGNALS._0
-    } else if (isEquals(signal, SIGNALS._0)) {
-        return SIGNALS._1
-    }
+    return nand(signal, signal)
 }
 
 export const not16 = (
