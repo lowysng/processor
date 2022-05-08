@@ -142,9 +142,9 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
 
     let out: SixteenBitSignal
 
-    if (zeroX)      x = SIGNALS._0000000000000000
+    if (zeroX)      x = and16(x, not16(x))
     if (negateX)    x = not16(x)
-    if (zeroY)      y = SIGNALS._0000000000000000
+    if (zeroY)      y = and16(y, not16(y))
     if (negateY)    y = not16(y)
 
     if (isAdd)     out = add16(x, y)
