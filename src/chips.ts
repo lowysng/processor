@@ -2,6 +2,7 @@ import {
     SIGNALS,
     OneBitSignal,
     TwoBitSignal,
+    ThreeBitSignal,
     SixBitSignal,
     SixteenBitSignal,
     concatenate,
@@ -10,7 +11,6 @@ import {
     isEquals,
     toString,
     every,
-    ThreeBitSignal,
 } from './signals'
 import {
     and,
