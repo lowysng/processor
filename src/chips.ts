@@ -1,5 +1,6 @@
 import {
     SIGNALS,
+    Signal,
     OneBitSignal,
     TwoBitSignal,
     ThreeBitSignal,
@@ -73,7 +74,10 @@ export const inc16 = (
     return add16(signal, makeSignal('0000 0000 0000 0001') as SixteenBitSignal)
 }
 
-type Register = (input?: SixteenBitSignal, isLoad?: OneBitSignal) => SixteenBitSignal
+type Register = (
+    input?: SixteenBitSignal,
+    isLoad?: OneBitSignal,
+) => SixteenBitSignal
 
 export const makeRegister = (): Register => {
     let latch: SixteenBitSignal = SIGNALS._0000000000000000
@@ -85,7 +89,11 @@ export const makeRegister = (): Register => {
     }
 }
 
-type RAM64K = (address: SixteenBitSignal, input?: SixteenBitSignal, isLoad?: OneBitSignal) => SixteenBitSignal
+type RAM64K = (
+    address: SixteenBitSignal,
+    input?: SixteenBitSignal,
+    isLoad?: OneBitSignal,
+) => SixteenBitSignal
 
 export const makeRAM64K = (): RAM64K => {
     const registers = {}
@@ -108,7 +116,7 @@ type ProgramCounter = (
 
 export const makeProgramCounter = (): ProgramCounter => {
     let latch: SixteenBitSignal = SIGNALS._0000000000000000
-    return (input?, isIncrement?,  isLoad?, isReset?,) => {
+    return (input?, isIncrement?, isLoad?, isReset?) => {
         if (isReset && isEquals(isReset, SIGNALS._1)) {
             latch = SIGNALS._0000000000000000
         } else if (isLoad && isEquals(isLoad, SIGNALS._1)) {
@@ -140,23 +148,30 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
     const isAdd     = isEquals(slice(control, 4, 5), SIGNALS._1)
     const negateOut = isEquals(slice(control, 5, 6), SIGNALS._1)
 
-    let out: SixteenBitSignal
-
     if (zeroX)      x = and16(x, not16(x))
     if (negateX)    x = not16(x)
     if (zeroY)      y = and16(y, not16(y))
     if (negateY)    y = not16(y)
-
+    
+    let out: SixteenBitSignal
+    
     if (isAdd)     out = add16(x, y)
     else           out = and16(x, y)
     if (negateOut) out = not16(out)
     
-    const isZero = (signal: OneBitSignal) => isEquals(signal, SIGNALS._0)
-
+    const isZero = (signal: Signal) => {
+        const isZero = (oneBitSignal: OneBitSignal) => isEquals(oneBitSignal, SIGNALS._0)
+        return every(signal, isZero)
+    }
+    const isNegative = (signal: Signal) => {
+        const firstBitIsOne = (signal: Signal) => isEquals(slice(signal, 0, 1), SIGNALS._1)
+        return firstBitIsOne(signal) ? SIGNALS._1 : SIGNALS._0
+    }
+    
     return {
         out,
-        isZero: every(out, isZero),
-        isNegative: isEquals(slice(out, 0, 1), SIGNALS._1) ? SIGNALS._1 : SIGNALS._0,
+        isZero: isZero(out),
+        isNegative: isNegative(out),
     }
 }
 
@@ -172,7 +187,6 @@ export type CPUOutput = {
     isWriteMemory: OneBitSignal,
     pcRegister: SixteenBitSignal,
     isHalt: OneBitSignal,
-
     _aRegister: Function,
     _dRegister: Function,
     _pcRegister: Function,
