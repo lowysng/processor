@@ -126,19 +126,18 @@ export const debugComputer = (states: ComputerState[]) => {
         console.log('Right: go to next state')
         console.log('CTRL+C: quit\n')
         console.log(`   State: ${stateIndex} ${stateIndex === maxStateIndex - 1 ? '(HALT)' : ''}`)
-        console.log(`   CPU A register:      ${toString(state.aRegister)}`)
-        console.log(`   CPU D register:      ${toString(state.dRegister)}`)
-        console.log(`   CPU program counter: ${toString(state.pcRegister)} [${toNumber(state.pcRegister)}]`)
-        console.log(`   Current instruction: ${toString(state.instruction)}\n`)
+        console.log(`   CPU A register:      ${toString(state.aRegister)} | ${toNumber(state.aRegister)}`)
+        console.log(`   CPU D register:      ${toString(state.dRegister)} | ${toNumber(state.dRegister)}`)
+        console.log(`   CPU program counter: ${toString(state.pcRegister)} | ${toNumber(state.pcRegister)}\n`)
         console.log('   ---------------------\t---------------------')
         console.log('   Instruction memory   \tData memory          ')
         console.log('   ---------------------\t---------------------')
         for (let i = 0 ; i < MEMORY_RANGE; i++) {
             const _i = String(i).padStart(2, '0')
             if (i === toNumber(state.pcRegister)) {
-                console.log(`-> [${_i}] ${toString(state.iMemory[i])}\t[${_i}]${toString(state.dMemory[i])}`)
+                console.log(`-> [${_i}] ${toString(state.iMemory[i])} \t[${_i}] ${toString(state.dMemory[i])} | ${toNumber(state.dMemory[i])}`)
             } else {
-                console.log(`   [${_i}] ${toString(state.iMemory[i])}\t[${_i}]${toString(state.dMemory[i])}`)
+                console.log(`   [${_i}] ${toString(state.iMemory[i])} \t[${_i}] ${toString(state.dMemory[i])} | ${toNumber(state.dMemory[i])}`)
             }
         }
 
