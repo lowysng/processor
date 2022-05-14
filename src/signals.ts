@@ -199,11 +199,14 @@ export const toNumber = (
 ): number => {
     let sum = 0
     let j = 0
-    for (let i = signal.bits.length - 1; i >= 0; i--) {
+    for (let i = signal.bits.length - 1; i >= 1; i--) {
         if (signal.bits[i] === Bit.ONE) {
             sum += 2 ** j
         }
         j += 1
+    }
+    if (signal.bits[0] === Bit.ONE) {
+        sum += -1 * (2 ** j)
     }
     return sum
 }
