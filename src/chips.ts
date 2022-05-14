@@ -154,7 +154,7 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
     if (negateY)    y = not16(y)
     
     let out: SixteenBitSignal
-    
+
     if (isAdd)     out = add16(x, y)
     else           out = and16(x, y)
     if (negateOut) out = not16(out)
@@ -200,27 +200,34 @@ export const makeCPU = (): CPU => {
     const pcRegister = makeProgramCounter()
 
     return ({ instruction, memoryIn, isReset }) => {
+
+        // decode
         const opCode = slice(instruction, 0, 1) as OneBitSignal
         const aSignal = slice(instruction, 3, 4) as OneBitSignal
         const cSignal = slice(instruction, 4, 10) as SixBitSignal
         const dSignal = slice(instruction, 10, 13) as ThreeBitSignal
         const jSignal = slice(instruction, 13, 16) as ThreeBitSignal
 
+        // execute
         const ALUInput1 = dRegister()
         const ALUInput2 = multiplexor16(aRegister(), memoryIn, aSignal)
         const { out: ALUOut, isZero, isNegative } = ALU({ x: ALUInput1, y: ALUInput2, control: cSignal })
 
+        // write back to a register
         const aRegisterNextValue = multiplexor16(instruction, ALUOut, opCode)
         const isWriteARegister = or(not(opCode), slice(dSignal, 0, 1) as OneBitSignal)
         aRegister(aRegisterNextValue, isWriteARegister)
 
+        // write back to d register
         const isWriteDRegister = and(opCode, slice(dSignal, 1, 2) as OneBitSignal)
         dRegister(ALUOut, isWriteDRegister)
 
+        // write back to memory
         const memoryOut = ALUOut
         const memoryAddress = aRegister()
         const isWriteMemory = and(opCode, slice(dSignal, 2, 3) as OneBitSignal)
 
+        // fetch next instruction
         let isJump: OneBitSignal = SIGNALS._0
         if (isEquals(opCode, SIGNALS._0)) isJump = SIGNALS._0
         else if (isEquals(jSignal, makeSignal('000'))) isJump = SIGNALS._0
