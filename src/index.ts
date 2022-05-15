@@ -1,12 +1,9 @@
-import { makeComputer, debugComputer, ComputerState } from './computer'
+import { Computer } from './computer'
 
-const computer = makeComputer()
+const computer = new Computer()
 
-while (computer()) {
-    console.log('executing!')
+while (computer.fetchExecute()) {
+
 }
 
-console.log('halt!')
-
-const stateHistory = computer('getStateHistory') as ComputerState[]
-debugComputer(stateHistory)
+// computer.debugger()
