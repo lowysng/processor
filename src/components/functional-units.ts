@@ -100,8 +100,8 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
     if (negateOut) out = not16(out)
     
     const isZero = (signal: Signal) => {
-        const isZero = (oneBitSignal: OneBitSignal) => oneBitSignal.isEquals(SIGNALS._0)
-        return signal.every(isZero) ? SIGNALS._1 : SIGNALS._0
+        const bitIsZero = (oneBitSignal: OneBitSignal) => oneBitSignal.isEquals(SIGNALS._0)
+        return signal.every(bitIsZero) ? SIGNALS._1 : SIGNALS._0
     }
     const isNegative = (signal: Signal) => {
         const firstBitIsOne = (signal: Signal) => signal.slice(0, 1).isEquals(SIGNALS._1)

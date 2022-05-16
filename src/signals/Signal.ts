@@ -31,7 +31,23 @@ export class Signal {
         this.bits = bits
     }
 
-    narrow(signal: Signal): Signal {
+    isEquals(otherSignal: Signal): boolean {
+        if (this.bits.length !== otherSignal.bits.length) {
+            return false
+        }
+        return this.bits.every((bit, index) => bit === otherSignal.bits[index])
+    }
+
+    atIndex(index: number): Bit {
+        return this.bits[index]
+    }
+
+    slice(start: number, end?: number): Signal {
+        const sliced = this.bits.slice(start, end)
+        return Signal.narrow(new Signal(sliced, sliced.length))
+    }
+
+    static narrow(signal: Signal): Signal {
         switch (signal.bits.length) {
             case 1:
                 return new OneBitSignal(signal.bits as OneBitTuple)
@@ -50,28 +66,12 @@ export class Signal {
         }
     }
 
-    isEquals(otherSignal: Signal): boolean {
-        if (this.bits.length !== otherSignal.bits.length) {
-            return false
-        }
-        return this.bits.every((bit, index) => bit === otherSignal.bits[index])
-    }
-
-    atIndex(index: number): Bit {
-        return this.bits[index]
-    }
-
-    slice(start: number, end?: number): Signal {
-        const sliced = this.bits.slice(start, end)
-        return this.narrow(new Signal(sliced, sliced.length))
-    }
-
     concatenate(...signals: Signal[]): Signal {
         let bits: Bit[] = [...this.bits]
         signals.forEach(signal => {
             bits = bits.concat(signal.bits)
         })
-        return this.narrow(new Signal(bits, bits.length))
+        return Signal.narrow(new Signal(bits, bits.length))
     }
 
     some(predicate: (s: OneBitSignal) => boolean): boolean {
@@ -101,7 +101,7 @@ export class Signal {
             const oneBitSignal = new OneBitSignal([bit])
             return mapper(oneBitSignal).bits[0]
         })
-        return this.narrow(new Signal(mapped, mapped.length))
+        return Signal.narrow(new Signal(mapped, mapped.length))
     }
 
     mapAgainst(otherSignal: Signal, mapper: (s1: OneBitSignal, s2: OneBitSignal) => OneBitSignal): Signal {
@@ -110,7 +110,7 @@ export class Signal {
             const otherOneBitSignal = new OneBitSignal([otherSignal.bits[index]])
             return mapper(oneBitSignal, otherOneBitSignal).bits[0]
         })
-        return this.narrow(new Signal(mapped, mapped.length))
+        return Signal.narrow(new Signal(mapped, mapped.length))
     }
 
     toString(): string {
@@ -134,6 +134,11 @@ export class Signal {
         }
         return sum
     }
+
+    static toDecimal(bits: string): number {
+        return new Signal(bits, bits.length).toDecimal()
+    }
+    
 }
 
 export class OneBitSignal extends Signal {

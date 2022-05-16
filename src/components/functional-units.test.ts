@@ -2,7 +2,7 @@ import {
     SIGNALS,
     SixBitSignal,
     SixteenBitSignal
-} from '../signals-v2'
+} from '../signals'
 import {
     fullAdder,
     add16,

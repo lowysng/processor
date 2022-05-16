@@ -1,4 +1,4 @@
-import { SIGNALS, EightBitSignal, SixteenBitSignal } from '../signals-v2'
+import { SIGNALS, EightBitSignal, SixteenBitSignal } from '../signals'
 import { 
     nand,
     not,

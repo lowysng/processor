@@ -1,4 +1,4 @@
-import { SIGNALS } from '../signals-v2'
+import { SIGNALS } from '../signals'
 import {
     Register,
     RAM64K,
