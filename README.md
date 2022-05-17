@@ -4,7 +4,6 @@ A basic computer system written in Typescript. Based on the (free!) [nand2tetris
 computer architecture course.
 
 ```
-
 Left: go to previous state
 Right: go to next state
 CTRL+C: quit
@@ -49,5 +48,4 @@ CTRL+C: quit
    [29] 0000000000000000 	[29] 0000000000000000 | 0
    [30] 0000000000000000 	[30] 0000000000000000 | 0
    [31] 0000000000000000 	[31] 0000000000000000 | 0
-
 ```
