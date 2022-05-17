@@ -1,7 +1,7 @@
 # processor
 
-A basic computer system written in Typescript. Based on the (free!) [nand2tetris](https://www.nand2tetris.org)
-computer architecture course.
+A basic computer system written in Typescript. Based on the first five parts of the
+(free!) [nand2tetris](https://www.nand2tetris.org) computer architecture course.
 
 ```
 Left: go to previous state
@@ -49,3 +49,13 @@ CTRL+C: quit
    [30] 0000000000000000 	[30] 0000000000000000 | 0
    [31] 0000000000000000 	[31] 0000000000000000 | 0
 ```
+
+## how to run
+
+1. `npm ci` to install dependencies
+2. `npm run start` to run computer
+
+## writing and running your own program
+
+The project uses an instruction set that is custom made for the course.
+See [here](https://www.nand2tetris.org/_files/ugd/44046b_7ef1c00a714c46768f08c459a6cab45a.pdf) for more details!
