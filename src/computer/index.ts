@@ -33,8 +33,8 @@ export class Computer {
             aRegister: aRegister.toString(),
             dRegister: dRegister.toString(),
             programCounter: programCounter.toString(),
-            iMemory: this.iMemory.snap(MEMORY_RANGE),
-            dMemory: this.dMemory.snap(MEMORY_RANGE),
+            iMemory: this.iMemory.takeSnapshot(MEMORY_RANGE),
+            dMemory: this.dMemory.takeSnapshot(MEMORY_RANGE),
         })
     }
 
@@ -43,23 +43,21 @@ export class Computer {
         const instruction = this.iMemory.probe(this.pcAddress)
 
         // execute
-        const {
-            memoryOut,
-            memoryAddress,
-            isWriteMemory,
-            pcOut,
-            isHalt,
-        } = this.cpu.step({
+        const result = this.cpu.step({
             instruction,
             memoryIn: this.memoryIn,
             isReset: SIGNALS._0,
         })
 
+        const { memoryAddress, memoryOut, isWriteMemory } = result
         this.memoryIn = this.dMemory.probe(memoryAddress, memoryOut, isWriteMemory)
+
+        const { pcOut } = result
         this.pcAddress = pcOut
         
         this.storeHistory()
 
+        const { isHalt } = result
         if (isHalt.isEquals(SIGNALS._1)) {
             return false
         }
@@ -89,7 +87,6 @@ export class Computer {
                 this.render(stateIndex, stateIndex === maxStateIndex - 1);
             }
         });
-
     }
 
     private render(stateIndex: number, isHalt: boolean) {
@@ -115,9 +112,7 @@ export class Computer {
                 console.log(`   [${_i}] ${iMemory[i]} \t[${_i}] ${dMemory[i]} | ${Signal.toDecimal(dMemory[i])}`)
             }
         }
-
     }
-
 }
 
 export interface ComputerState {

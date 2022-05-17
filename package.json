@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc --outDir ./out",
-    "dev": "rm -rf ./out && npm run build && node ./out/index.js",
+    "start": "rm -rf ./out && npm run build && node ./out/index.js",
     "test": "jest"
   },
   "keywords": [],

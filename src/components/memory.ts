@@ -31,7 +31,7 @@ export class RAM64K {
         const register = this.registers[address.toString()]
         return register.probe(input, isLoad)
     }
-    snap(range: number): string[] {
+    takeSnapshot(range: number): string[] {
         let strings: string[] = []
         let address: SixteenBitSignal = SIGNALS._0000000000000000
         for (let i = 0; i < range; i++) {
