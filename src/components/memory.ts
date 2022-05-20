@@ -7,6 +7,7 @@ import { inc16 } from './functional-units'
 
 export class Register {
     private latch: SixteenBitSignal = SIGNALS._0000000000000000
+
     probe(
         input?: SixteenBitSignal,
         isLoad?: OneBitSignal,
@@ -20,17 +21,19 @@ export class Register {
 
 export class RAM64K {
     private registers: Register[] = []
+
     probe(
         address: SixteenBitSignal,
         input?: SixteenBitSignal,
         isLoad?: OneBitSignal,
     ): SixteenBitSignal {
-        if (this.registers[address.toString()] === undefined) {
-            this.registers[address.toString()] = new Register()
+        if (this.registers[address.toDecimal()] === undefined) {
+            this.registers[address.toDecimal()] = new Register()
         }
-        const register = this.registers[address.toString()]
+        const register = this.registers[address.toDecimal()]
         return register.probe(input, isLoad)
     }
+
     takeSnapshot(range: number): string[] {
         let strings: string[] = []
         let address: SixteenBitSignal = SIGNALS._0000000000000000
@@ -44,6 +47,7 @@ export class RAM64K {
 
 export class ProgramCounter {
     private latch: SixteenBitSignal = SIGNALS._0000000000000000
+
     probe(
         input?: SixteenBitSignal,
         isIncrement?: OneBitSignal,

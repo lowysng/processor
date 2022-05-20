@@ -78,6 +78,8 @@ type ALUOutput = {
 }
 
 export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
+
+    // slice control bits
     const zeroX     = control.slice(0, 1).isEquals(SIGNALS._1)
     const negateX   = control.slice(1, 2).isEquals(SIGNALS._1)
     const zeroY     = control.slice(2, 3).isEquals(SIGNALS._1)
@@ -85,13 +87,14 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
     const isAdd     = control.slice(4, 5).isEquals(SIGNALS._1)
     const negateOut = control.slice(5, 6).isEquals(SIGNALS._1)
 
+    // transform inputs
     if (zeroX)      x = and16(x, not16(x))
     if (negateX)    x = not16(x)
     if (zeroY)      y = and16(y, not16(y))
     if (negateY)    y = not16(y)
     
+    // compute output
     let out: SixteenBitSignal
-
     if (isAdd) {
         out = add16(x, y)
     } else {
@@ -99,18 +102,19 @@ export const ALU = ({ x, y, control }: ALUInput): ALUOutput => {
     }
     if (negateOut) out = not16(out)
     
-    const isZero = (signal: Signal) => {
-        const bitIsZero = (oneBitSignal: OneBitSignal) => oneBitSignal.isEquals(SIGNALS._0)
-        return signal.every(bitIsZero) ? SIGNALS._1 : SIGNALS._0
-    }
-    const isNegative = (signal: Signal) => {
-        const firstBitIsOne = (signal: Signal) => signal.slice(0, 1).isEquals(SIGNALS._1)
-        return firstBitIsOne(signal) ? SIGNALS._1 : SIGNALS._0
-    }
-    
     return {
         out,
         isZero: isZero(out),
         isNegative: isNegative(out),
     }
+}
+
+const isZero = (signal: Signal) => {
+    const bitIsZero = (oneBitSignal: OneBitSignal) => oneBitSignal.isEquals(SIGNALS._0)
+    return signal.every(bitIsZero) ? SIGNALS._1 : SIGNALS._0
+}
+
+const isNegative = (signal: Signal) => {
+    const firstBitIsOne = (signal: Signal) => signal.slice(0, 1).isEquals(SIGNALS._1)
+    return firstBitIsOne(signal) ? SIGNALS._1 : SIGNALS._0
 }

@@ -3,9 +3,9 @@ import { Computer } from './computer'
 const computer = new Computer()
 
 while (computer.fetchExecute()) {
-    console.log('executing!')
+    console.log('executing!');
 }
 
-console.log('halt!')
+console.log('halt!');
 
 computer.debug()

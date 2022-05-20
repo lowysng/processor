@@ -19,25 +19,6 @@ export class Computer {
         this.storeHistory()
     }
 
-    private loadProgram() {
-        let address = SIGNALS._0000000000000000
-        program.forEach(instruction => {
-            this.iMemory.probe(address, instruction, SIGNALS._1)
-            address = inc16(address)
-        })
-    }
-
-    private storeHistory() {
-        const { aRegister, dRegister, programCounter } = this.cpu.probeRegisters()
-        this.history.push({
-            aRegister: aRegister.toString(),
-            dRegister: dRegister.toString(),
-            programCounter: programCounter.toString(),
-            iMemory: this.iMemory.takeSnapshot(MEMORY_RANGE),
-            dMemory: this.dMemory.takeSnapshot(MEMORY_RANGE),
-        })
-    }
-
     public fetchExecute() {
         // fetch
         const instruction = this.iMemory.probe(this.pcAddress)
@@ -63,6 +44,25 @@ export class Computer {
         }
 
         return true
+    }
+
+    private loadProgram() {
+        let address = SIGNALS._0000000000000000
+        program.forEach(instruction => {
+            this.iMemory.probe(address, instruction, SIGNALS._1)
+            address = inc16(address)
+        })
+    }
+
+    private storeHistory() {
+        const { aRegister, dRegister, programCounter } = this.cpu.probeRegisters()
+        this.history.push({
+            aRegister: aRegister.toString(),
+            dRegister: dRegister.toString(),
+            programCounter: programCounter.toString(),
+            iMemory: this.iMemory.takeSnapshot(MEMORY_RANGE),
+            dMemory: this.dMemory.takeSnapshot(MEMORY_RANGE),
+        })
     }
 
     public debug() {
