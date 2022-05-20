@@ -52,8 +52,9 @@ CTRL+C: quit
 
 ## how to run
 
-1. `npm ci` to install dependencies
-2. `npm run start` to run computer
+1. set up typescript
+2. `npm ci` to install dependencies
+3. `npm run start` to run computer
 
 ## writing and running your own program
 
